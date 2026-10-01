@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Математика в экономике — AI</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial;color:#111827}
+main{max-width:760px;margin:auto;padding:24px 16px 50px}h1{font-size:28px;margin:0 0 4px}.muted{color:#6b7280}.card{background:#fff;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 5px 20px #0001}
+button{background:#111827;color:white;border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:700}input{display:none}
+img{display:none;max-width:100%;max-height:430px;border-radius:14px;margin-top:12px}pre{white-space:pre-wrap;background:#f8fafc;padding:14px;border-radius:14px}
+</style></head><body><main>
+<h1>🧮 Математика в экономике</h1><div class="muted">Решатель задач по фотографии</div>
+<section class="card">
+<input id="photo" type="file" accept="image/*" capture="environment">
+<button onclick="photo.click()">📸 Сфотографировать задачу</button>
+<img id="preview">
+</section>
+<section class="card"><h2>🧠 Решение</h2><div id="status" class="muted">Загрузи фотографию.</div><div id="answer"></div></section>
+<section class="card"><h2>📚 Методики</h2>
+<p>EX-01 — кредит / финансовая математика</p>
+<p>EX-02 — спрос и выручка</p>
+<p>EX-03 — оптимальный набор потребителя</p>
+<p>EX-04 — транспортная задача</p>
+<p>EX-05 — линейное программирование, графический метод</p>
+<p>EX-06 — планирование / диета</p>
+</section>
+</main>
+<script>
+const photo=document.getElementById("photo"),preview=document.getElementById("preview"),status=document.getElementById("status"),answer=document.getElementById("answer");
+photo.onchange=async()=>{
+ const f=photo.files[0]; if(!f)return;
+ preview.src=URL.createObjectURL(f);preview.style.display="block";
+ status.textContent="⏳ Распознаю и решаю…";answer.innerHTML="";
+ const fd=new FormData();fd.append("image",f);
+ try{
+   const r=await fetch("BACKEND_URL/api/solve",{method:"POST",body:fd});
+   const d=await r.json(); if(!r.ok)throw Error(d.error||"Ошибка сервера");
+   status.textContent="✅ Готово";answer.innerHTML="<pre>"+esc(d.solution)+"</pre>";
+ }catch(e){status.textContent="❌ "+e.message}
+};
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+</script></body></html>
